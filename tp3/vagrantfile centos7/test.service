@@ -1,0 +1,18 @@
+[Unit]
+Description=Start network service
+After=network.target
+
+[Service]
+User=web
+Type=simple
+Environment=PORT=8080
+
+ExecStartPre=/bin/sudo /bin/firewall-cmd --add-port=${PORT}/tcp --permanent
+ExecStartPre=/bin/sudo /bin/firewall-cmd --reload
+ExecStart=/bin/python3 -m http.server ${PORT}
+ExecStopPost=/bin/sudo /bin/firewall-cmd --remove-port=${PORT}/tcp --permanent
+ExecStopPost=/bin/sudo /bin/firewall-cmd --reload
+
+
+[Install]
+WantedBy=multi-user.target
